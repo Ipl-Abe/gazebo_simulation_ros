@@ -8,11 +8,12 @@
   <arg name="x0" default="0" />
   <arg name="y0" default="0" />
   <arg name="z0" default="0" />
+
+  <arg name="have_hardware" default="true" />
   
   <include file="$(find gazebo_ros)/launch/empty_world.launch">
     <arg name="world_name" value="my_world.world"/>
     <arg name="use_sim_time" value="true"/>
-    <!-- <arg name="verbose" value="true"/> -->
   </include>
 
   <!-- Run a python script to the send a service call to gazebo_ros to spawn a URDF robot -->
@@ -29,15 +30,14 @@
 
   <include file="$(find gazebo_simulation_ros)/launch/mycobot_fake_control.launch" />
 
-  <!-- <node name="_spawner" pkg="gazebo_ros" type="spawn_model" respawn="false" output="screen"
-    args="-urdf -model myCobot -param robot_description -x $(arg x0) -y $(arg y0) -z $(arg z0)" /> -->
-  
-  <!-- run the mycobot hardwre interface-->
-  <node name="mycobot_hardware_interface" pkg="gazebo_simulation_ros" type="mycobot_hardware_interface.py" />
+  <!-- If you don't have hardware, specify --> 
+  <group if="$(arg have_hardware)">
+    <!-- run the mycobot hardwre interface-->
+    <node name="mycobot_hardware_interface" pkg="gazebo_simulation_ros" type="mycobot_hardware_interface.py" />
+  </group>
 
   <!-- run the rqt_joint_trajectory_controller for mycobot -->
   <node name="rqt_joint_trajectory_controller" pkg="rqt_joint_trajectory_controller" type="rqt_joint_trajectory_controller" />
-  <!-- <node pkg="my_package" name="navigate.py" type="navigate.py" output="screen">  -->
-  <!-- </node> -->
+
   <!-- <node name="rviz" pkg="rviz" type="rviz" args="-d $(arg rvizconfig)" required="true" /> -->
 </launch>
